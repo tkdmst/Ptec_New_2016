@@ -23,7 +23,7 @@ public class Controller {
 				model = ac.read();
 				view.display(model);
 				System.out.println(">read終了");
-			} catch (Exception e) {
+			} catch (AccessException e) {
 				System.out.println(e.getMessage());
 				throw new AccessException("proc内の致命的なエラー");
 			}
