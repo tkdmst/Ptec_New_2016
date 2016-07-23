@@ -1,8 +1,7 @@
 package socDB;
 
 public class Mein {
-	private static Access db = new ClientDB();
-	//private static Access soc = new ClientSocket(String hostname, int portNo);
+	private static Access db = ClientDB.instance();
 
 	public static void main(String[] args) {
 		try {
