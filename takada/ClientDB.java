@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ClientDB {
+public class ClientDB implements Access {
 	private Connection con;
 	private PreparedStatement write_pstmt;
 	private Statement stmt;
@@ -33,7 +33,7 @@ public class ClientDB {
 	}
 
 	// 書き込み
-	public void write(Model model) throws SQLException {
+	public void write(Model model) throws Exception {
 		try {
 			boolean flag = false;
 			while (true) {
@@ -50,23 +50,25 @@ public class ClientDB {
 			write_pstmt.setInt(1, nom);
 			write_pstmt.setString(2, model.toString());
 			write_pstmt.executeUpdate();
+
+			con.commit();
 		} catch (SQLException e) {
+			con.rollback();
 			e.printStackTrace();
-			throw new SQLException();
+			throw new Exception();
 		}
 	}
 
 	// 読み込み
-	public Model read() throws SQLException {
+	public Model read() throws Exception {
 		sql = "Select* from socDB where upd_date=(Select Max(upd_date) from socDB)";
 		try {
 			rset = stmt.executeQuery(sql);
 			while (rset.next())
-				sql = "キー値:" + nom + ",文章：" + rset.getString("message")
-						+ ",最終更新日：" + rset.getString("upd_date");
+				sql = "キー値:" + nom + ",文章：" + rset.getString("message") + ",最終更新日：" + rset.getString("upd_date");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new SQLException();
+			throw new Exception();
 		}
 		return new Model(sql);
 	}
@@ -74,10 +76,8 @@ public class ClientDB {
 	// クローズ
 	public void close() {
 		try {
-			if (con != null) {
-				con.commit();
+			if (con != null)
 				con.close();
-			}
 			if (stmt != null)
 				stmt.close();
 			if (write_pstmt != null)
@@ -85,11 +85,6 @@ public class ClientDB {
 			if (rset != null)
 				rset.close();
 		} catch (SQLException e) {
-			try {
-				con.rollback();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
 			e.printStackTrace();
 		}
 	}
