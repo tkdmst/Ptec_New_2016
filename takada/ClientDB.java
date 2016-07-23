@@ -16,7 +16,7 @@ public class ClientDB implements Access {
 	private String sql;
 
 	// 初期化 ドライバーとの接続
-	public void initialize() throws Exception {
+	public void initialize() throws AccessException {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost/howdb", "root", "");
@@ -25,15 +25,15 @@ public class ClientDB implements Access {
 			stmt = con.createStatement();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new Exception("JDBCドライバのロードに失敗しました。");
+			throw new AccessException("JDBCドライバのロードに失敗しました。");
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Exception("ドライバーでの失敗");
+			throw new AccessException("ドライバーでの失敗");
 		}
 	}
 
 	// 書き込み
-	public void write(Model model) throws Exception {
+	public void write(Model model) throws AccessException{
 		try {
 			boolean flag = false;
 			while (true) {
@@ -50,17 +50,20 @@ public class ClientDB implements Access {
 			write_pstmt.setInt(1, nom);
 			write_pstmt.setString(2, model.toString());
 			write_pstmt.executeUpdate();
-
 			con.commit();
 		} catch (SQLException e) {
-			con.rollback();
+			try {
+				con.rollback();
+			} catch (Exception e1) {
+				throw new AccessException("ロールバックエラー");
+			}
 			e.printStackTrace();
-			throw new Exception();
+			throw new AccessException("書き込みエラー");
 		}
 	}
 
 	// 読み込み
-	public Model read() throws Exception {
+	public Model read() throws AccessException {
 		sql = "Select* from socDB where upd_date=(Select Max(upd_date) from socDB)";
 		try {
 			rset = stmt.executeQuery(sql);
@@ -68,7 +71,7 @@ public class ClientDB implements Access {
 				sql = "キー値:" + nom + ",文章：" + rset.getString("message") + ",最終更新日：" + rset.getString("upd_date");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new Exception();
+			throw new AccessException("読み込みエラー");
 		}
 		return new Model(sql);
 	}
