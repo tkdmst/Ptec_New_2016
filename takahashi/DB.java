@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import NEW_DB_1.Sql_view;
-
+//こんにちは
 public class DB {
 	private Connection conn = null;
 	private Statement stmt = null;
