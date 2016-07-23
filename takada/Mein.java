@@ -1,15 +1,15 @@
 package socDB;
 
 public class Mein {
-	private static ClientDB cDB = new ClientDB();
+	private static Access db = ClientDB.instance();
 
 	public static void main(String[] args) {
 		try {
-			cDB.initialize();
-			cDB.read();
+			db.initialize();
+			db.read();
 			View view = new View();
 			view.initialize();
-			Controller cotroller = new Controller(view, cDB);
+			Controller cotroller = new Controller(view, db);
 			cotroller.proc();
 		} catch (NullPointerException e) {
 			System.out.println("nullPo");
@@ -19,7 +19,7 @@ public class Mein {
 			e.printStackTrace();
 		} finally {
 			System.out.println(">終了");
-			cDB.close();
+			db.close();
 		}
 	}
 }
