@@ -18,15 +18,14 @@ public class View {
 	}
 
 	// keyboから読み込み
-	public Model input() throws Exception {
+	public Model input() throws AccessException {
 		String str = null;
 		try {
-			if (keybo != null) {
+			if (keybo != null)
 				str = keybo.readLine();
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new IOException();
+			throw new AccessException();
 		}
 		return new Model(str);
 	}
