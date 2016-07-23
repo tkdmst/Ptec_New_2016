@@ -15,6 +15,21 @@ public class ClientDB implements Access {
 	private int nom = 1;
 	private String sql;
 
+	// singletonパターンで
+	private static ClientDB clidb;
+
+	// instance()のためにprivateでインスタンス化を不可に
+	private ClientDB() {
+		clidb = null;
+	}
+
+	// instance()を呼び出したときだけインスタンス化できる
+	public static ClientDB instance() {
+		if (clidb == null)
+			clidb = new ClientDB();
+		return clidb;
+	}
+
 	// 初期化 ドライバーとの接続
 	public void initialize() throws AccessException {
 		try {
@@ -33,7 +48,7 @@ public class ClientDB implements Access {
 	}
 
 	// 書き込み
-	public void write(Model model) throws AccessException{
+	public void write(Model model) throws AccessException {
 		try {
 			boolean flag = false;
 			while (true) {
