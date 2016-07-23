@@ -1,15 +1,13 @@
 package socDB;
 
-import java.sql.SQLException;
-
 public class Controller {
 	private final View view;
-	private final ClientDB cDB;
+	private final Access ac;
 
 	// コンストラクタ
-	Controller(View view, ClientDB cDB) {
+	Controller(View view, Access ac) {
 		this.view = view;
-		this.cDB = cDB;
+		this.ac = ac;
 	}
 
 	// クライアントの主な動き方 入力、書き込み、読み込み、表示
@@ -20,12 +18,13 @@ public class Controller {
 				Model model = view.input();
 				if (model.toString().equals("stop"))
 					break;
-				cDB.write(model);
+				ac.write(model);
 				System.out.println(">write 終了");
-				model = cDB.read();
+				model = ac.read();
 				view.display(model);
 				System.out.println(">read終了");
-			} catch (SQLException e) {
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 				throw new Exception("proc内の致命的なエラー");
 			}
 		}
