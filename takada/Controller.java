@@ -1,7 +1,8 @@
-package socDB;
+﻿package socDB;
 
 import java.sql.SQLException;
 
+//test
 public class Controller {
 	private final View view;
 	private final ClientDB cDB;
