@@ -62,6 +62,7 @@ public class ClientDB implements Access {
 					break;
 				nom++;
 			}
+			stmt.executeQuery("Select* from socDB where nom=" + nom + " for update" );
 			write_pstmt.setInt(1, nom);
 			write_pstmt.setString(2, model.toString());
 			write_pstmt.executeUpdate();
