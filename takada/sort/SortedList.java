@@ -1,46 +1,54 @@
 package sort;
 
-/** バブルソート型で作成することとする */
+/** 挿入ソートに近い型で作成することとする */
 public class SortedList<T extends SortedObject> {
+	/** TODO:datasの配列が存在していない状態 */
 	private T[] datas;
 
+
 	/**
-	 * 配列に順序だてて入れるためにIntegerSortedクラスはソートに使う
-	 * その準備
+	 * 配列の最後尾へ格納
+	 * 小さい方から比較
+	 * 小さい方が大きかったら内容の交換
 	 */
 	public void add(T obj) {
-
-		int nom = obj.getKey();
-		obj = datas[(datas.length) + 1];	// 今ある配列+1へ格納してこの後比較で交換していく
 		boolean bool;
-		for (int s = 0; s > datas.length; s++) {
-			bool = datas[(datas.length) + 1].compare(datas[s]);
-			if(bool){
-
+		T t;
+		IntegerSorted minSort;
+		datas[datas.length] = obj;
+		if (1 <= datas.length){
+			for (int i = 0; i < datas.length; i++) {
+				minSort = new IntegerSorted(datas[i].getKey(), datas[i].getValue());
+				bool = minSort.compare(new IntegerSorted(datas[datas.length].getKey(), datas[datas.length].getValue()));
+				if (bool) {
+					t = datas[datas.length];
+					datas[datas.length] = datas[i];
+					datas[i] = t;
+				}
 			}
 		}
-
-	//	IntegerSorted so = new IntegerSorted();
-	//	so.setInitialize(nom, obj.getValue());
-	//	boolean bool = so.compare(so);
 	}
 
-	/** 順序だてて入れた中から取り出す(番号で) */
+	/** posがキーのオブジェクトを返却 */
 	public T get(int pos) {
-		return datas[pos];
+		for (int i = 0; i <= datas.length; i++) {
+			if (datas[i].getKey() == pos)
+				return datas[i];
+		}
+		return null;
 	}
 
 	/**
 	 * objをdatasから削除
-	 * addが上手く行っていれば、上の配列で塗りつぶせば削除になるはず
+	 * １つ上の配列で上書きする
 	 */
 	public void remove(T obj) {
-		for (int s = 0; s > datas.length; s++) {
-			if (datas[s].getKey() == obj.getKey()) {
-				for (int i = s; i > datas.length; i++) {
-					datas[i] = datas[i + 1];
+		for (int i = 0; i < datas.length; i++) {
+			if (datas[i].getKey() == obj.getKey()) {
+				for (int s = i; s < datas.length; s++) {
+					datas[s] = datas[s + 1];
 				}
-			} // 見つからなかった場合を分ける場所
+			}
 		}
 	}
 

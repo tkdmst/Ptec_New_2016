@@ -2,15 +2,17 @@ package sort;
 
 public class IntegerSorted implements SortedObject {
 
+	/** ユニークであるキー値 数値のみ */
 	private int key;
+	/** 文字である値 */
 	private String value;
 
-	/** セッター代わり */
-	public void setInitialize(int nom,String value){
-		this.key = nom;
+	IntegerSorted(int key, String value){
+		this.key = key;
 		this.value = value;
 	}
 
+	/** ゲッター */
 	public int getKey(){
 		return key;
 	}
@@ -18,11 +20,8 @@ public class IntegerSorted implements SortedObject {
 		return value;
 	}
 
-	/** 今のクラスのkeyの方が持ってきたkeyより大きいとtrue
-	 * 大きい値を残していく
-	 */
+	/** 選択中のキー > 配列最後のキー だとtrueを返却 比較のみ */
 	public boolean compare(SortedObject x){
-		this.key = (this.key > x.getKey()) ? x.getKey()  :this.key;
 		return this.key > x.getKey();
 	}
 }
