@@ -2,7 +2,7 @@ package sort;
 
 public interface SortedObject {
 
-	// getterを指示より増やした
+	// getを指示より増やした
 	public int getKey();
 	public String getValue();
 
