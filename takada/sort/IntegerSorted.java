@@ -7,21 +7,22 @@ public class IntegerSorted implements SortedObject {
 	/** 文字である値 */
 	private String value;
 
-	IntegerSorted(int key, String value){
+	IntegerSorted(int key, String value) {
 		this.key = key;
 		this.value = value;
 	}
 
-	/** ゲッター */
-	public int getKey(){
+	/** キーの取得 */
+	public int getKey() {
 		return key;
 	}
-	public String getValue(){
+	/** バリューの取得 */
+	public String getValue() {
 		return value;
 	}
 
-	/** 選択中のキー > 配列最後のキー だとtrueを返却 比較のみ */
-	public boolean compare(SortedObject x){
+	/** クラス内のキー > xのキー だとtrueを返却 逆はfalse */
+	public boolean compare(SortedObject x) {
 		return this.key > x.getKey();
 	}
 }

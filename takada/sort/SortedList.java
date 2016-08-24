@@ -1,39 +1,52 @@
 package sort;
 
-/** 挿入ソートに近い型で作成することとする */
+/** 配列の箱は固定で、溢れたら大きい数字を弾き出す
+ * 選択ソートに近い形 */
 public class SortedList<T extends SortedObject> {
-	/** TODO:datasの配列が存在していない状態 */
 	private T[] datas;
+	int tableNom;
 
+	@SuppressWarnings("unchecked")
+	public void initialize() {
+		tableNom = 5;
+		datas = (T[]) new SortedObject[tableNom];
+	}
+
+	public T[] getDatas() {
+		return datas;
+	}
 
 	/**
-	 * 配列の最後尾へ格納
-	 * 小さい方から比較
-	 * 小さい方が大きかったら内容の交換
+	 * 配列に空きがあるならその場所に代入して終了
+	 * 配列に空きがないなら大きいTを弾き出すために比較を続ける
 	 */
 	public void add(T obj) {
-		boolean bool;
-		T t;
-		IntegerSorted minSort;
-		datas[datas.length] = obj;
-		if (1 <= datas.length){
-			for (int i = 0; i < datas.length; i++) {
+		boolean bool = true;
+		SortedObject minSort;
+		T prepareT;
+		for (int i = 0; i < tableNom; i++) {
+			if (datas[i] != null) {
 				minSort = new IntegerSorted(datas[i].getKey(), datas[i].getValue());
-				bool = minSort.compare(new IntegerSorted(datas[datas.length].getKey(), datas[datas.length].getValue()));
+				bool = minSort.compare(new IntegerSorted(obj.getKey(), obj.getValue()));
 				if (bool) {
-					t = datas[datas.length];
-					datas[datas.length] = datas[i];
-					datas[i] = t;
-				}
+					prepareT = datas[i];
+					datas[i] = obj;
+					obj = prepareT;
+				} // objに大きいTをはじき出して、objと次の数字を比べている
+			} else {
+				datas[i] = obj;
+				break;
 			}
 		}
 	}
 
 	/** posがキーのオブジェクトを返却 */
 	public T get(int pos) {
-		for (int i = 0; i <= datas.length; i++) {
-			if (datas[i].getKey() == pos)
+		for (int i = 0; i < tableNom; i++) {
+			if (datas[i].getKey() == pos) {
+				System.out.println("キー："+datas[i].getKey() + ", 値：" + datas[i].getValue());
 				return datas[i];
+			}
 		}
 		return null;
 	}
@@ -43,13 +56,23 @@ public class SortedList<T extends SortedObject> {
 	 * １つ上の配列で上書きする
 	 */
 	public void remove(T obj) {
-		for (int i = 0; i < datas.length; i++) {
-			if (datas[i].getKey() == obj.getKey()) {
-				for (int s = i; s < datas.length; s++) {
-					datas[s] = datas[s + 1];
+		try {
+			for (int i = 0; i < tableNom; i++) {
+				if (datas[i].getKey() == obj.getKey()) {
+					for (int s = i; s < tableNom - 1; s++) {
+						if (datas[s + 1] != null) {
+							datas[s] = datas[s + 1];
+						} else {
+							datas[i] = (T)null;
+						}
+					}
+					datas[tableNom - 1] = (T)null;
+					break;
 				}
 			}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			System.out.println("remove failed!");
 		}
 	}
-
 }
