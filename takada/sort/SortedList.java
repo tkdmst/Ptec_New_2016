@@ -1,14 +1,11 @@
 package sort;
 
-/** 配列の箱は固定で、溢れたら大きい数字を弾き出す
- * 選択ソートに近い形 */
 public class SortedList<T extends SortedObject> {
 	private T[] datas;
-	int tableNom;
+	int tableNom = 1;
 
 	@SuppressWarnings("unchecked")
 	public void initialize() {
-		tableNom = 5;
 		datas = (T[]) new SortedObject[tableNom];
 	}
 
@@ -17,34 +14,56 @@ public class SortedList<T extends SortedObject> {
 	}
 
 	/**
-	 * 配列に空きがあるならその場所に代入して終了
-	 * 配列に空きがないなら大きいTを弾き出すために比較を続ける
+	 * 配列に空きがないならば、新しい配列add[]へ入れ替えて別メソッドへ
+	 * 最初の代入datas[0]が空きならば代入して終了
+	 * @param obj SortedObjectを引きついだ仮型引数を利用している
 	 */
 	public void add(T obj) {
-		boolean bool = true;
-		SortedObject minSort;
-		T prepareT;
-		for (int i = 0; i < tableNom; i++) {
+		boolean boolNullCheck = true;
+		@SuppressWarnings("unchecked")
+		T[] add = (T[]) new SortedObject[datas.length + 1];
+		for (int i = 0; i < datas.length; i++) {
 			if (datas[i] != null) {
-				minSort = new IntegerSorted(datas[i].getKey(), datas[i].getValue());
-				bool = minSort.compare(new IntegerSorted(obj.getKey(), obj.getValue()));
-				if (bool) {
-					prepareT = datas[i];
-					datas[i] = obj;
-					obj = prepareT;
-				} // objに大きいTをはじき出して、objと次の数字を比べている
+				add[i] = datas[i];
 			} else {
 				datas[i] = obj;
-				break;
+				boolNullCheck = false;
 			}
 		}
+		if (boolNullCheck) {
+			add[add.length - 1] = obj;
+			datas = addIn(add).clone();
+		}
+	}
+
+	/**
+	 * datasを格納したadd[]内の操作を行う
+	 * 比較、入れ替え
+	 *
+	 * @param add
+	 *            新しく作った配列
+	 * @return T[] その配列を返却
+	 */
+	private T[] addIn(T[] add) {
+		boolean compareCheck = true;
+		for (int s = 0; s < add.length; s++) {
+			SortedObject minSort = new IntegerSorted(add[s].getKey(), add[s].getValue());
+			compareCheck = minSort
+					.compare(new IntegerSorted(add[add.length - 1].getKey(), add[add.length - 1].getValue()));
+			if (compareCheck) {
+				T prepareT = add[s];
+				add[s] = add[add.length - 1];
+				add[add.length - 1] = prepareT;
+			}
+		}
+		return add;
 	}
 
 	/** posがキーのオブジェクトを返却 */
 	public T get(int pos) {
-		for (int i = 0; i < tableNom; i++) {
+		for (int i = 0; i < datas.length; i++) {
 			if (datas[i].getKey() == pos) {
-				System.out.println("キー："+datas[i].getKey() + ", 値：" + datas[i].getValue());
+				System.out.println("キー：" + datas[i].getKey() + ", 値：" + datas[i].getValue());
 				return datas[i];
 			}
 		}
@@ -52,27 +71,31 @@ public class SortedList<T extends SortedObject> {
 	}
 
 	/**
-	 * objをdatasから削除
-	 * １つ上の配列で上書きする
+	 * 引数と同じキーを持つデータがあったら削除する
+	 * del[]はdatas[]-1のデータ数を持つため、格納し直しクローンで移す
 	 */
 	public void remove(T obj) {
-		try {
-			for (int i = 0; i < tableNom; i++) {
-				if (datas[i].getKey() == obj.getKey()) {
-					for (int s = i; s < tableNom - 1; s++) {
-						if (datas[s + 1] != null) {
-							datas[s] = datas[s + 1];
-						} else {
-							datas[i] = (T)null;
-						}
-					}
-					datas[tableNom - 1] = (T)null;
-					break;
-				}
+		boolean existCheck = true;
+		@SuppressWarnings("unchecked")
+		T[] del = (T[]) new SortedObject[datas.length - 1];
+		for (int i = 0; i < datas.length; i++) {
+			if (datas[i].getKey() == obj.getKey()) {
+				existCheck = false;
+				continue;
 			}
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-			System.out.println("remove failed!");
+			if (existCheck)
+				del[i] = datas[i];
+			else
+				del[i - 1] = datas[i];
 		}
+		datas = del.clone();
+	}
+
+	// 表示用メソッド
+	public void printOut() {
+		for (int i = 0; i < datas.length; i++)
+			System.out.print(datas[i].getKey() + " ");
+		System.out.println();
 	}
 }
+
